@@ -1,26 +1,40 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+
+/* Timing without any extra header: clock() lives in the C runtime library, so we
+   only declare its prototype here instead of including <time.h>.
+   clock() returns processor time in ticks; CLOCKS_PER_SEC is 1000000 on
+   Linux/macOS and 1000 on Windows. */
+extern long clock(void);
+#ifdef _WIN32
+#define TICKS_PER_SEC 1000.0
+#else
+#define TICKS_PER_SEC 1000000.0
+#endif
 #include "graham.h"
 
 /* ===================== Stack ===================== */
 void  CREATE(Stack *S)            { S->top = -1; }
 int   ISEMPTY(const Stack *S)     { return S->top == -1; }
 int   ISFULL(const Stack *S)      { return S->top == MAX_N - 1; }
+static void stack_error(const char *msg) { fprintf(stderr, "Stack error: %s\n", msg); }
+
 void  PUSH(Stack *S, Point e) {
-    if (ISFULL(S)) { fprintf(stderr, "Stack overflow\n"); exit(1); }
+    if (ISFULL(S)) { stack_error("overflow"); return; }
     S->items[++S->top] = e;
 }
 Point POP(Stack *S) {
-    if (ISEMPTY(S)) { fprintf(stderr, "Stack underflow\n"); exit(1); }
+    Point none = {0.0, 0.0};
+    if (ISEMPTY(S)) { stack_error("underflow"); return none; }
     return S->items[S->top--];
 }
 Point TOP(const Stack *S) {
-    if (ISEMPTY(S)) { fprintf(stderr, "TOP on empty stack\n"); exit(1); }
+    Point none = {0.0, 0.0};
+    if (ISEMPTY(S)) { stack_error("TOP on empty stack"); return none; }
     return S->items[S->top];
 }
 Point NEXT_TO_TOP(const Stack *S) {
-    if (S->top < 1) { fprintf(stderr, "NEXT-TO-TOP needs 2 elements\n"); exit(1); }
+    Point none = {0.0, 0.0};
+    if (S->top < 1) { stack_error("NEXT-TO-TOP needs 2 elements"); return none; }
     return S->items[S->top - 1];
 }
 
@@ -89,7 +103,7 @@ static int graham_scan(Point *pts, int n, Point *hull, void (*sort_fn)(Point *, 
                        const char *label) {
     if (n <= 0) return 0;
 
-    clock_t start = clock();
+    long t_start = clock();
 
     /* 1. find anchor: lowest y, ties -> lowest x */
     int ai = 0;
@@ -130,9 +144,10 @@ static int graham_scan(Point *pts, int n, Point *hull, void (*sort_fn)(Point *, 
     m = S.top + 1;
     for (int i = 0; i < m; i++) hull[i] = S.items[i];
 
-    clock_t end = clock();
+    long t_end = clock();
+    double ms = 1000.0 * (double)(t_end - t_start) / TICKS_PER_SEC;
     printf("[%s] n = %d, hull points = %d, elapsed time = %.3f ms\n",
-           label, n, m, 1000.0 * (double)(end - start) / CLOCKS_PER_SEC);
+           label, n, m, ms);
     return m;
 }
 
