@@ -1,14 +1,15 @@
 /* Generates test_<n>.txt for n = 2^6 ... 2^15 (no stdlib.h: own random generator) */
 #include <stdio.h>
 
-static unsigned long long state = 12345ULL;
 
-/* 64-bit LCG; returns a double in [0,1) */
+static unsigned int state = 12345;
+
+/* 32-bit LCG; returns a double in [0,1) */
 static double rnd(void) {
-    state = state * 6364136223846793005ULL + 1442695040888963407ULL;
-    return (double)(state >> 11) / 9007199254740992.0;   /* / 2^53 */
+    state = state * 1664525 + 1013904223;
+    return state / 4294967296.0;      /* / 2^32 */
 }
-
+    
 int main(void) {
     for (int e = 6; e <= 15; e++) {
         int n = 1 << e;
