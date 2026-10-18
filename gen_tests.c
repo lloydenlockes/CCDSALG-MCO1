@@ -3,7 +3,7 @@
 
 
 static unsigned int rng = 12345;
-// Changed state to RNG
+
 
 /* 32-bit LCG; returns a double in [0,1) */
 static double rnd(void) {
