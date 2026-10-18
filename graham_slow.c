@@ -1,11 +1,6 @@
 #include <stdio.h>
+#include <time.h>
 #include "graham_slow.h"
-
-/* Timing without any extra header: clock() lives in the C runtime library, so we
-   only declare its prototype here instead of including <time.h>.
-   clock() returns processor time in ticks */
-extern long clock(void);
-#define TICKS_PER_SEC 1000.0
 
 /* ===================== Geometry helpers ===================== */
 /* cross product of (b-a) x (c-a): >0 means a->b->c is a left (CCW) turn */
@@ -17,7 +12,7 @@ static double dist2(Point a, Point b) {
     return dx * dx + dy * dy;
 }
 
-static Point P0;   /* anchor used by the comparison */
+static Point P0;    /* anchor used by the comparison */
 
 /* Returns <0 if a comes before b in polar-angle order around P0.
    P0 has the lowest y (then lowest x), so all angles lie in [0, pi) and the
@@ -51,7 +46,7 @@ static Point work[MAX_N];
 int graham_scan_slow(Point *pts, int n, Point *hull) {
     if (n <= 0) return 0;
 
-    long t_start = clock();
+    clock_t t_start = clock();
 
     /* 1. find anchor: lowest y, ties -> lowest x */
     int ai = 0;
@@ -92,8 +87,8 @@ int graham_scan_slow(Point *pts, int n, Point *hull) {
     int m = S.top + 1;
     for (int i = 0; i < m; i++) hull[i] = S.items[i];
 
-    long t_end = clock();
-    double ms = 1000.0 * (double)(t_end - t_start) / TICKS_PER_SEC;
+    clock_t t_end = clock();
+    double ms = 1000.0 * (double)(t_end - t_start) / CLOCKS_PER_SEC;
     printf("[Graham scan + insertion sort] n = %d, hull points = %d, elapsed time = %.3f ms\n", n, m, ms);
     return m;
 }
