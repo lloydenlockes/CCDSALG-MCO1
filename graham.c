@@ -2,14 +2,9 @@
 
 /* Timing without any extra header: clock() lives in the C runtime library, so we
    only declare its prototype here instead of including <time.h>.
-   clock() returns processor time in ticks; CLOCKS_PER_SEC is 1000000 on
-   Linux/macOS and 1000 on Windows. */
+   clock() returns processor time in ticks */
 extern long clock(void);
-#ifdef _WIN32
 #define TICKS_PER_SEC 1000.0
-#else
-#define TICKS_PER_SEC 1000000.0
-#endif
 #include "graham.h"
 
 /* ===================== Stack ===================== */
