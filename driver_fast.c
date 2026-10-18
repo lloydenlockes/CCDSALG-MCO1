@@ -13,6 +13,7 @@ int main(void) {
     FILE *InputFile = NULL;
     FILE *OutputFile = NULL;
 
+    /* 1: Get filenames from user */
     printf("Enter input filename (with extension): ");
     if (scanf("%255s", InputFileName) != 1) {
         printf("Error: Failed to read input filename.\n");
@@ -25,6 +26,7 @@ int main(void) {
         return 1;
     }
 
+    /* 2: Open and read input text file */
     InputFile = fopen(InputFileName, "r");
     if (InputFile == NULL) {
         printf("Error: Could not open file %s for reading.\n", InputFileName);
@@ -46,8 +48,10 @@ int main(void) {
     }
     fclose(InputFile);
 
+    /* 3: Run Graham Scan (Fast Version) */
     HullSize = graham_scan_fast(Points, NumPoints, HullPoints);
 
+    /* 4: Write convex hull results to output file */
     OutputFile = fopen(OutputFileName, "w");
     if (OutputFile == NULL) {
         printf("Error: Could not open file %s for writing.\n", OutputFileName);
@@ -56,6 +60,7 @@ int main(void) {
 
     fprintf(OutputFile, "%d\n", HullSize);
     for (Index = 0; Index < HullSize; Index++) {
+        /* format required: 6 digits after decimal point */
         fprintf(OutputFile, "%.6f %.6f\n", HullPoints[Index].x, HullPoints[Index].y);
     }
     fclose(OutputFile);
