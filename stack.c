@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include "stack.h"
 
-static void stack_error(const char *msg) { fprintf(stderr, "Stack error: %s\n", msg); }
+static void stack_error(const char *msg) {
+    fprintf(stderr, "Stack error: %s\n", msg);
+}
 
 void  CREATE(Stack *S)      
 {
