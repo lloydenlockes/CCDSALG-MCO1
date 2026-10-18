@@ -2,12 +2,13 @@
 #include <stdio.h>
 
 
-static unsigned int state = 12345;
+static unsigned int rng = 12345;
+// Changed state to RNG
 
 /* 32-bit LCG; returns a double in [0,1) */
 static double rnd(void) {
-    state = state * 1664525 + 1013904223;
-    return state / 4294967296.0;      /* / 2^32 */
+    rng = rng * 1664525 + 1013904223;
+    return rng / 4294967296.0;      /* / 2^32 */
 }
 
 int main(void) {
