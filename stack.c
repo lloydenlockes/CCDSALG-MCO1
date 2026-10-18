@@ -3,9 +3,19 @@
 
 static void stack_error(const char *msg) { fprintf(stderr, "Stack error: %s\n", msg); }
 
-void  CREATE(Stack *S)         { S->top = -1; }
-int   ISEMPTY(const Stack *S)  { return S->top == -1; }
-int   ISFULL(const Stack *S)   { return S->top == MAX_N - 1; }
+void  CREATE(Stack *S)      
+{
+    S->top = -1;
+}
+
+int   ISEMPTY(const Stack *S)
+{
+    return S->top == -1;
+}
+int   ISFULL(const Stack *S)  
+{
+    return S->top == MAX_N - 1;
+}
 
 void PUSH(Stack *S, Point e) {
     if (ISFULL(S)) { stack_error("overflow"); return; }
