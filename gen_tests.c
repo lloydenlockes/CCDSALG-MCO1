@@ -9,21 +9,6 @@ static double rnd(void) {
     state = state * 1664525 + 1013904223;
     return state / 4294967296.0;      /* / 2^32 */
 }
-    
-/*int main(void) {
-    for (int e = 6; e <= 15; e++) {
-        int n = 1 << e;
-        char name[64];
-        sprintf(name, "test_%d.txt", n);
-        FILE *f = fopen(name, "w");
-        if (!f) return 1;
-        fprintf(f, "%d\n", n);
-        for (int i = 0; i < n; i++)
-            fprintf(f, "%.6f %.6f\n", rnd() * 2000 - 1000, rnd() * 2000 - 1000);
-        fclose(f);
-    }
-    return 0;
-}*/
 
 int main(void) {
     for (int n = 64; n <= 32768; n = n * 2) {   /* 64, 128, 256, ..., 32768 */
