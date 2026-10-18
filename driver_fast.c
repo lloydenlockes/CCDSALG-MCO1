@@ -1,42 +1,65 @@
 #include <stdio.h>
-#include "graham.h"
+#include "graham_fast.h"
 
-static Point pts[MAX_N];
-static Point hull[MAX_N];
+static Point Points[MAX_N];
+static Point HullPoints[MAX_N];
 
 int main(void) {
-    char inname[256], outname[256];
-    int n;
+    char InputFileName[256];
+    char OutputFileName[256];
+    int NumPoints = 0;
+    int HullSize = 0;
+    int Index = 0;
+    FILE *InputFile = NULL;
+    FILE *OutputFile = NULL;
 
     printf("Enter input filename (with extension): ");
-    if (scanf("%255s", inname) != 1) return 1;
-    printf("Enter output filename (with extension): ");
-    if (scanf("%255s", outname) != 1) return 1;
-
-    FILE *fin = fopen(inname, "r");
-    if (!fin) { perror("Cannot open input file"); return 1; }
-
-    if (fscanf(fin, "%d", &n) != 1 || n < 1 || n > MAX_N) {
-        fprintf(stderr, "Invalid n (must be 1..%d)\n", MAX_N);
-        fclose(fin);
+    if (scanf("%255s", InputFileName) != 1) {
+        printf("Error: Failed to read input filename.\n");
         return 1;
     }
-    for (int i = 0; i < n; i++) {
-        if (fscanf(fin, "%lf %lf", &pts[i].x, &pts[i].y) != 2) {
-            fprintf(stderr, "Bad data at point %d\n", i + 1);
-            fclose(fin);
+
+    printf("Enter output filename (with extension): ");
+    if (scanf("%255s", OutputFileName) != 1) {
+        printf("Error: Failed to read output filename.\n");
+        return 1;
+    }
+
+    InputFile = fopen(InputFileName, "r");
+    if (InputFile == NULL) {
+        printf("Error: Could not open file %s for reading.\n", InputFileName);
+        return 1;
+    }
+
+    if (fscanf(InputFile, "%d", &NumPoints) != 1 || NumPoints < 1 || NumPoints > MAX_N) {
+        printf("Error: Invalid number of points (must be between 1 and %d).\n", MAX_N);
+        fclose(InputFile);
+        return 1;
+    }
+
+    for (Index = 0; Index < NumPoints; Index++) {
+        if (fscanf(InputFile, "%lf %lf", &Points[Index].x, &Points[Index].y) != 2) {
+            printf("Error: Bad point data at line %d.\n", Index + 2);
+            fclose(InputFile);
             return 1;
         }
     }
-    fclose(fin);
+    fclose(InputFile);
 
-    int m = graham_scan_fast(pts, n, hull);
+    HullSize = graham_scan_fast(Points, NumPoints, HullPoints);
 
-    FILE *fout = fopen(outname, "w");
-    if (!fout) { perror("Cannot open output file"); return 1; }
-    fprintf(fout, "%d\n", m);
-    for (int i = 0; i < m; i++)
-        fprintf(fout, "%.6f %.6f\n", hull[i].x, hull[i].y);
-    fclose(fout);
+    OutputFile = fopen(OutputFileName, "w");
+    if (OutputFile == NULL) {
+        printf("Error: Could not open file %s for writing.\n", OutputFileName);
+        return 1;
+    }
+
+    fprintf(OutputFile, "%d\n", HullSize);
+    for (Index = 0; Index < HullSize; Index++) {
+        fprintf(OutputFile, "%.6f %.6f\n", HullPoints[Index].x, HullPoints[Index].y);
+    }
+    fclose(OutputFile);
+
+    printf("Process completed successfully.\n");
     return 0;
 }
